@@ -199,7 +199,7 @@ export default function __experimentalUseColors(
 				detectedBackgroundColorRef.current = backgroundColor;
 				return { backgroundColor };
 			} )( () => <></> ),
-		[]
+		[ attributes ]
 	);
 
 	return useMemo( () => {
