@@ -48,9 +48,26 @@ const blockAttributes = {
 	},
 };
 
+function parseBorderColor( styleString ) {
+	if ( ! styleString ) {
+		return;
+	}
+	const matches = styleString.match( /border-color:([^;]+)[;]?/ );
+	if ( matches && matches[ 1 ] ) {
+		return matches[ 1 ];
+	}
+}
+
 const deprecated = [
 	{
-		attributes: blockAttributes,
+		attributes: {
+			...blockAttributes,
+			figureStyle: {
+				source: 'attribute',
+				selector: 'figure',
+				attribute: 'style',
+			},
+		},
 		save( { attributes } ) {
 			const {
 				mainColor,
@@ -60,6 +77,7 @@ const deprecated = [
 				value,
 				citation,
 				className,
+				figureStyle,
 			} = attributes;
 
 			const isSolidColorStyle = includes( className, SOLID_COLOR_CLASS );
@@ -86,10 +104,9 @@ const deprecated = [
 			// If normal style and a named color are being used, we need to retrieve the color value to set the style,
 			// as there is no expectation that themes create classes that set border colors.
 			} else if ( mainColor ) {
-				const colors = get( select( 'core/block-editor' ).getSettings(), [ 'colors' ], [] );
-				const colorObject = getColorObjectByAttributeValues( colors, mainColor );
+				const borderColor = parseBorderColor( figureStyle );
 				figureStyles = {
-					borderColor: colorObject.color,
+					borderColor,
 				};
 			}
 
@@ -108,6 +125,24 @@ const deprecated = [
 					</blockquote>
 				</figure>
 			);
+		},
+		migrate( { className, figureStyle, mainColor, ...attributes } ) {
+			const isSolidColorStyle = includes( className, SOLID_COLOR_CLASS );
+			if ( ! isSolidColorStyle && mainColor && figureStyle ) {
+				const borderColor = parseBorderColor( figureStyle );
+				if ( borderColor ) {
+					return {
+						...attributes,
+						className,
+						customMainColor: borderColor,
+					};
+				}
+			}
+			return {
+				className,
+				mainColor,
+				...attributes,
+			};
 		},
 	},
 	{
