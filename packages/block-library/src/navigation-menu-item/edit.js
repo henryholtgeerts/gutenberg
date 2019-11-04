@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -120,7 +121,8 @@ function NavigationMenuItemEdit( {
 						name="link"
 						icon="admin-links"
 						title={ __( 'Link' ) }
-						onClick={ () => {
+						onClick={ noop }
+						onMouseDown={ () => {
 							// It works together with LinkControl onCLose event.
 							if ( isLinkOpen ) {
 								return;
@@ -207,7 +209,7 @@ function NavigationMenuItemEdit( {
 						onKeyPress={ ( event ) => event.stopPropagation() }
 						currentLink={ link }
 						onLinkChange={ updateLink( setAttributes, label ) }
-						onClose={ () => setTimeout( () => setIsLinkOpen( false ), 100 ) }
+						onClose={ () => setIsLinkOpen( false ) }
 						currentSettings={ { 'new-tab': opensInNewTab } }
 						onSettingsChange={ updateLinkSetting( setAttributes ) }
 						fetchSearchSuggestions={ fetchSearchSuggestions }
