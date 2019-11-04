@@ -2,6 +2,8 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import { noop } from 'lodash';
+
 
 /**
  * Internal dependencies
@@ -16,6 +18,7 @@ function ToolbarButton( {
 	shortcut,
 	subscript,
 	onClick,
+	onMouseDown = noop,
 	className,
 	isActive,
 	isDisabled,
@@ -33,6 +36,7 @@ function ToolbarButton( {
 					event.stopPropagation();
 					onClick();
 				} }
+				onMouseDown={ onMouseDown }
 				className={ classnames(
 					'components-toolbar__control',
 					className,
